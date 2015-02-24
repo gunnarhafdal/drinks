@@ -33,7 +33,11 @@ footer {
   display: inline-block;
   padding: 20px;
   background-color: #c0ffee;
+  margin-bottom: 10px;
+}
 
+#sendList {
+  margin-bottom: 20px;
 }
 
 .Grid {
