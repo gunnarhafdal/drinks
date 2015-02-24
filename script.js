@@ -16,7 +16,7 @@ if(!localStorage.drinkers){
 
 function addPerson(e){
   var person = {}
-  person.name = prompt("Vinsamlegast skráið inn nafn á leikmann");
+  person.name = prompt("Vinsamlegast skráið inn nafn á leikmann", "");
   if (person.name == null) {
     return false;
   }
