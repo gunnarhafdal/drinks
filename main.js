@@ -1,3 +1,4 @@
+var Mustache = require('mustache');
 Array.prototype.removeAt = function(id) {
     for (var item in this) {
         if (this[item].id == id) {
