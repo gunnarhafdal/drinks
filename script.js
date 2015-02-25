@@ -7,7 +7,7 @@ Array.prototype.removeAt = function(id) {
     }
     return false;
 }
-var clickOrTouch = (('ontouchend' in window)) ? 'touchend' : 'click';
+
 var data = {drinkers: []}, template, totalTemplate, emailTemplate;
 
 if(!localStorage.drinkers){
@@ -72,12 +72,12 @@ function renderList () {
   var deleteme = document.querySelectorAll('.deleteme');
   if (beerme.length > 0) {
     for (var i = 0; i < beerme.length; i++) {
-      beerme[i].removeEventListener(clickOrTouch, addBeer);
+      beerme[i].removeEventListener('click', addBeer);
     };
   }
   if (deleteme.length > 0) {
     for (var i = 0; i < deleteme.length; i++) {
-      deleteme[i].removeEventListener(clickOrTouch, removePerson);
+      deleteme[i].removeEventListener('click', removePerson);
     };
   }
 
@@ -97,12 +97,12 @@ function renderList () {
   deleteme = document.querySelectorAll('.deleteme');
   if (beerme.length > 0) {
     for (var i = 0; i < beerme.length; i++) {
-      beerme[i].addEventListener(clickOrTouch, addBeer);
+      beerme[i].addEventListener('click', addBeer);
     };
   }
   if (deleteme.length > 0) {
     for (var i = 0; i < deleteme.length; i++) {
-      deleteme[i].addEventListener(clickOrTouch, removePerson);
+      deleteme[i].addEventListener('click', removePerson);
     };
   }
 }
@@ -131,9 +131,9 @@ function setup () {
   data = JSON.parse(localStorage.getItem('drinkers'));
   renderList();
 
-  document.querySelector('#addPerson').addEventListener(clickOrTouch, addPerson);
-  document.querySelector('#resetList').addEventListener(clickOrTouch, resetList);
-  document.querySelector('#sendList').addEventListener(clickOrTouch, sendList);
+  document.querySelector('#addPerson').addEventListener('click', addPerson);
+  document.querySelector('#resetList').addEventListener('click', resetList);
+  document.querySelector('#sendList').addEventListener('click', sendList);
 }
 
 function ready(fn) {
