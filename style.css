@@ -1,11 +1,21 @@
+html {
+-ms-touch-action: manipulation;
+touch-action: manipulation;
+}
 html,body { font-size: 100%; }
 body { font-family: Helvetica, Arial, sans-serif; font-size: 1.2rem; margin: 20px; text-align: center;}
 :focus {outline: 0;}
 .beerme, .deleteme, #addPerson, #sendList, #resetList {
-  cursor: pointer; 
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 #addPerson:hover, #sendList:hover, #resetList:hover {
-  text-decoration: underline; 
+  text-decoration: underline;
 }
 
 header h1 {
@@ -34,6 +44,7 @@ footer {
   padding: 20px;
   background-color: #c0ffee;
   margin-bottom: 10px;
+
 }
 
 #sendList {
