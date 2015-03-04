@@ -136,6 +136,25 @@ function setup () {
   document.querySelector('#sendList').addEventListener('click', sendList);
 }
 
+function handleAppCache() {
+  /**
+   * Here is the simplified version. Courtesy of Mike Koss.
+   * 
+   * See, http://labnote.beedesk.com/the-pitfalls-of-html5-applicationcache
+   */
+  if (applicationCache == undefined) {
+    return;
+  }
+  
+  if (applicationCache.status == applicationCache.UPDATEREADY) {
+    applicationCache.swapCache();
+    location.reload();
+    return;
+  }
+  
+  applicationCache.addEventListener('updateready', handleAppCache, false);
+}
+
 function ready(fn) {
   if (document.readyState != 'loading'){
     fn();
@@ -143,4 +162,5 @@ function ready(fn) {
     document.addEventListener('DOMContentLoaded', fn);
   }
 }
+handleAppCache();
 ready(setup);
