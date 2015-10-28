@@ -21,7 +21,8 @@
       <span class="Grid-cell name">👨</span>
       <span class="Grid-cell beer">🍻</span>
       <span class="Grid-cell add"></span>
-      <span class="Grid-cell delete"></span>
+      <span class="Grid-cell remove"></span>
+      <span class="Grid-cell menu"></span>
     </header>
     <div id="drinkers">
     </div>
@@ -31,13 +32,20 @@
       <p><span id="sendList" class="button">Senda lista</span> <span id="resetList" class="button">Endursetja lista</span></p>
     </footer>
   </section>
+  <div class="overlay js-overlay"></div>
   <script id="person" type="x-tmpl-mustache">
     {{#drinkers}}
     <article class="Grid">
       <span class="Grid-cell name">{{name}}</span>
       <span class="Grid-cell beer">{{beerCount}}</span>
-      <span class="Grid-cell add"><span class="beerme" data-id="{{id}}">🍺</span></span>
-      <span class="Grid-cell delete"><span class="deleteme" data-id="{{id}}">🚫</span></span>
+      <span class="Grid-cell add"><span class="beerup" data-id="{{id}}">+</span></span>
+      <span class="Grid-cell remove"><span class="beerdown" data-id="{{id}}">-</span></span>
+      <div class="Grid-cell js-menu menu">&hellip;
+        <div class="menu-wrapper hide">
+          <span class="rename" data-id="{{id}}">Laga nafn</span>
+          <span class="delete" data-id="{{id}}">Eyða af lista</span>
+        </div>
+      </div>
     </article>
     {{/drinkers}}
   </script>
@@ -54,6 +62,7 @@
 Samtals: {{totalAmount}}kr.
   </script>
   <script src="mustache.min.js"></script>
+  <script src="microbe.min.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

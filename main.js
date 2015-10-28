@@ -8,6 +8,8 @@ Array.prototype.removeAt = function(id) {
     return false;
 }
 
+var m = µ;
+
 var data = {drinkers: []}, template, totalTemplate, emailTemplate;
 
 if(!localStorage.drinkers){
@@ -35,19 +37,49 @@ function addPerson(e){
 
 function removePerson (e) {
   if (!confirm('Ertu viss að þú viljir eyða út þessum leikmanni?')) {
+    m('.menu-wrapper').addClass('hide');
     return false;
   }
-  var id = this.getAttribute("data-id");
+  var id = e.target.getAttribute("data-id");
   data.drinkers.removeAt(id);
   localStorage.setItem('drinkers', JSON.stringify(data));
   renderList();
+  m('.menu-wrapper').addClass('hide');
+}
+
+function renamePerson (e) {
+  var newName = prompt('Nýtt nafn leikmanns', '');
+  if(newName !== null){
+    var id = e.target.getAttribute("data-id");
+    data.drinkers.forEach(function(person){
+      if (person.id == id) {
+        person.name = newName;
+        localStorage.setItem('drinkers', JSON.stringify(data));
+        renderList();
+      }
+    });
+  }
+  m('.menu-wrapper').addClass('hide');
+  return true;
 }
 
 function addBeer (e) {
-  var id = this.getAttribute("data-id");
+  var id = e.target.getAttribute("data-id");
   data.drinkers.forEach(function(person){
     if (person.id == id) {
       person.beerCount = parseInt(person.beerCount) + 1;
+      localStorage.setItem('drinkers', JSON.stringify(data));
+      renderList();
+      return true;
+    }
+  });
+}
+
+function removeBeer (e) {
+  var id = e.target.getAttribute("data-id");
+  data.drinkers.forEach(function(person){
+    if (person.id == id) {
+      person.beerCount = parseInt(person.beerCount) - 1;
       localStorage.setItem('drinkers', JSON.stringify(data));
       renderList();
       return true;
@@ -68,19 +100,12 @@ function resetList (e) {
 
 function renderList () {
   // first we remove all event listeners on the buttons
-  var beerme = document.querySelectorAll('.beerme');
-  var deleteme = document.querySelectorAll('.deleteme');
-  if (beerme.length > 0) {
-    for (var i = 0; i < beerme.length; i++) {
-      beerme[i].removeEventListener('click', addBeer);
-    };
-  }
-  if (deleteme.length > 0) {
-    for (var i = 0; i < deleteme.length; i++) {
-      deleteme[i].removeEventListener('click', removePerson);
-    };
-  }
-
+  //m('.beerup').off('click');
+  //m('.beerdown').off('click');
+  //m('.delete').off('click');
+  //m('.rename').off('click');
+  //m('.js-menu').off('click');
+  
   var rendered = Mustache.render(template, data);
   document.querySelector('#drinkers').innerHTML = rendered;
 
@@ -93,18 +118,26 @@ function renderList () {
   document.querySelector('#total').innerHTML = totalRendered;
 
   // then we add them again
-  beerme = document.querySelectorAll('.beerme');
-  deleteme = document.querySelectorAll('.deleteme');
-  if (beerme.length > 0) {
-    for (var i = 0; i < beerme.length; i++) {
-      beerme[i].addEventListener('click', addBeer);
+  m('.beerup').on('click', addBeer);
+  m('.beerdown').on('click', removeBeer);
+  m('.delete').on('click', removePerson);
+  m('.rename').on('click', renamePerson);
+  m('.js-menu').on('click', function(e) {
+    console.log(this);
+    var wrapper = this.querySelector('.menu-wrapper');
+
+    if (wrapper.classList.contains('hide')) {
+      m('.menu-wrapper').addClass('hide');
+      m('body').addClass('show-overlay');
+      wrapper.classList.remove('hide');
+    } else{
+      wrapper.classList.add('hide');
+      m('body').removeClass('show-overlay');
     };
-  }
-  if (deleteme.length > 0) {
-    for (var i = 0; i < deleteme.length; i++) {
-      deleteme[i].addEventListener('click', removePerson);
-    };
-  }
+
+    
+  });
+
 }
 
 function sendList () {
@@ -131,9 +164,14 @@ function setup () {
   data = JSON.parse(localStorage.getItem('drinkers'));
   renderList();
 
-  document.querySelector('#addPerson').addEventListener('click', addPerson);
-  document.querySelector('#resetList').addEventListener('click', resetList);
-  document.querySelector('#sendList').addEventListener('click', sendList);
+  m('#addPerson').on('click', addPerson);
+  m('#resetList').on('click', resetList);
+  m('#sendList').on('click', sendList);
+
+  m('.js-overlay').on('click', function(e){
+    m('.menu-wrapper').addClass('hide');
+    m('body').removeClass('show-overlay');
+  });
 }
 
 function handleAppCache() {

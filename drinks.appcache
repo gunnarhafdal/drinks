@@ -1,7 +1,8 @@
 CACHE MANIFEST
-# v5 2015-03-04
+# v6 2015-10-28
 # This is another comment
 index.html
 mustache.min.js
+microbe.min.js
 main.js
 style.css
