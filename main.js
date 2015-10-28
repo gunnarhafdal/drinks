@@ -148,7 +148,7 @@ function sendList () {
       return price+"kr";
     },
     beerText: function() {
-      return this.beerCount == 1 ? "bjór" : "bjóra";
+      return  (this.beerCount % 10 !== 1 || this.beerCount % 100 === 11) ? "bjóra" : "bjór";
     }
   };
 
