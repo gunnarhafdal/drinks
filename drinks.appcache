@@ -1,7 +1,8 @@
 CACHE MANIFEST
-# v9 2015-10-28
+# v10 2015-10-28
 index.html
 mustache.min.js
 microbe.min.js
+fastclick.js
 main.js
 style.css

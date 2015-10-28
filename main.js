@@ -178,6 +178,7 @@ function setup () {
     m('.menu-wrapper').addClass('hide');
     m('body').removeClass('show-overlay');
   });
+  FastClick.attach(document.body);
 }
 
 function handleAppCache() {
