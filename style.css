@@ -15,6 +15,16 @@ body { font-family: Helvetica, Arial, sans-serif; font-size: 1.5rem; margin: 20p
   user-select: none;
 }
 
+.beerup {
+  color: darkgreen;
+  font-size: 1.6rem;
+}
+
+.beerdown {
+  color: maroon;
+  font-size: 1.6rem;  
+}
+
 header h1 {
   margin-top: 0;
 }
@@ -85,6 +95,7 @@ footer {
   -webkit-flex: 0 0 15%;
   flex: 0 0 15%;
   position: relative;
+  line-height: 36px;
 }
 
 .overlay {
