@@ -98,14 +98,7 @@ function resetList (e) {
   renderList();
 }
 
-function renderList () {
-  // first we remove all event listeners on the buttons
-  //m('.beerup').off('click');
-  //m('.beerdown').off('click');
-  //m('.delete').off('click');
-  //m('.rename').off('click');
-  //m('.js-menu').off('click');
-  
+function renderList () {  
   var rendered = Mustache.render(template, data);
   document.querySelector('#drinkers').innerHTML = rendered;
 
@@ -146,8 +139,21 @@ function sendList () {
     totalBeers = totalBeers + parseInt(person.beerCount);
   });
 
+  var view = {
+    totalAmount: totalBeers*10,
+    drinkers: data.drinkers, 
+    date: date,
+    debt: function(){
+      var price = this.beerCount * 10;
+      return price+"kr";
+    },
+    beerText: function() {
+      return this.beerCount == 1 ? "bjór" : "bjóra";
+    }
+  };
+
   var date = new Date();
-  var emailBody = Mustache.render(emailTemplate, {totalAmount: totalBeers*10, drinkers: data.drinkers, date: date});
+  var emailBody = Mustache.render(emailTemplate, view);
   
   var link = "mailto:" + "?subject="+encodeURIComponent("Drykkja: " + date) + "&body=" + encodeURIComponent(emailBody);
   window.location.href = link;  
