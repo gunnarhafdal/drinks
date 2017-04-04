@@ -119,6 +119,9 @@ function renderList () {
 
   var totalBeers = 0;
   data.drinkers.forEach(function(person){
+    if (!person.hasOwnProperty('practiceBeerCount')) {
+      person.practiceBeerCount = 0;
+    }
     totalBeers = totalBeers + parseInt(person.beerCount);
   });
 
