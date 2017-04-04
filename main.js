@@ -122,6 +122,11 @@ function renderList () {
     if (!person.hasOwnProperty('practiceBeerCount')) {
       person.practiceBeerCount = 0;
     }
+
+    if (!person.practiceBeerCount) {
+      person.practiceBeerCount = 0;
+    }
+    
     totalBeers = totalBeers + parseInt(person.beerCount);
   });
 
