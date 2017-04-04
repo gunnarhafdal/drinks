@@ -18,8 +18,8 @@
   </header>
   <section>  
     <header class="Grid thead">
-      <span class="Grid-cell name">👨</span>
-      <span class="Grid-cell beer">🍻</span>
+      <span class="Grid-cell name">👨🏻</span>
+      <span class="Grid-cell beer">🍺 - 🍻</span>
       <span class="Grid-cell add"></span>
       <span class="Grid-cell remove"></span>
       <span class="Grid-cell menu"></span>
@@ -29,7 +29,8 @@
     <p id="total"></p>
     <footer>
       <p><span id="addPerson" class="button">Bæta við leikmanni</span></p>
-      <p><span id="sendList" class="button">Senda lista</span> <span id="resetList" class="button">Endursetja lista</span></p>
+      <p><span id="sendList" class="button">Senda lista</span> <span id="resetPracticeList" class="button">Endursetja æfingu</span></p>
+      <p><span id="resetList" class="button">Endursetja lista</span></p>
     </footer>
   </section>
   <div class="overlay js-overlay"></div>
@@ -37,7 +38,7 @@
     {{#drinkers}}
     <article class="Grid">
       <span class="Grid-cell name">{{name}}</span>
-      <span class="Grid-cell beer">{{beerCount}}</span>
+      <span class="Grid-cell beer">{{practiceBeerCount}} - {{beerCount}}</span>
       <span class="Grid-cell add"><span class="beerup" data-id="{{id}}">＋</span></span>
       <span class="Grid-cell remove"><span class="beerdown" data-id="{{id}}">－</span></span>
       <div class="Grid-cell js-menu menu">&hellip;

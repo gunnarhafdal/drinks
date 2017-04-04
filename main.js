@@ -23,6 +23,7 @@ function addPerson(e){
     return false;
   }
   person.beerCount = 0;
+  person.practiceBeerCount = 0;
   
   if (data.drinkers.length === 0) {
     person.id = 0;
@@ -68,6 +69,7 @@ function addBeer (e) {
   data.drinkers.forEach(function(person){
     if (person.id == id) {
       person.beerCount = parseInt(person.beerCount) + 1;
+      person.practiceBeerCount = parseInt(person.practiceBeerCount) + 1;
       localStorage.setItem('drinkers', JSON.stringify(data));
       renderList();
       return true;
@@ -80,6 +82,7 @@ function removeBeer (e) {
   data.drinkers.forEach(function(person){
     if (person.id == id) {
       person.beerCount = parseInt(person.beerCount) - 1;
+      person.practiceBeerCount = parseInt(person.practiceBeerCount) - 1;
       localStorage.setItem('drinkers', JSON.stringify(data));
       renderList();
       return true;
@@ -92,7 +95,19 @@ function resetList (e) {
     return false;
   }
   data.drinkers.forEach(function(person){
-    person.beerCount = 0;    
+    person.beerCount = 0;  
+    person.practiceBeerCount = 0;  
+  });
+  localStorage.setItem('drinkers', JSON.stringify(data));
+  renderList();
+}
+
+function resetPracticeList (e) {
+  if (!confirm('Ertu viss?')) {
+    return false;
+  }
+  data.drinkers.forEach(function(person){ 
+    person.practiceBeerCount = 0;  
   });
   localStorage.setItem('drinkers', JSON.stringify(data));
   renderList();
@@ -172,6 +187,7 @@ function setup () {
 
   m('#addPerson').on('click', addPerson);
   m('#resetList').on('click', resetList);
+  m('#resetPracticeList').on('click', resetPracticeList);
   m('#sendList').on('click', sendList);
 
   m('.js-overlay').on('click', function(e){
