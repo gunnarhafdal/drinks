@@ -47,6 +47,14 @@ function addPerson() {
   });
 }
 
+function removePerson(e) {
+  if (!confirm('Ertu viss?')) {
+    return false;
+  }
+  var id = e.target.getAttribute("data-id");
+  return firebase.database().ref('players/' + id).remove();
+} 
+
 function renamePerson (e) {
   var id = e.target.getAttribute("data-id");
   firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
@@ -172,6 +180,7 @@ function renderList () {
   m('.beerup').on('click', addBeer);
   m('.beerdown').on('click', removeBeer);
   m('.rename').on('click', renamePerson);
+  m('.delete').on('click', removePerson);
   m('.js-menu').on('click', function(e) {
     var wrapper = this.querySelector('.menu-wrapper');
 
