@@ -4,11 +4,7 @@
   <meta charset="utf-8" />
   <meta name="author" content="Gunnar Hafdal - gunnarhafdal.com">
   <meta name="description" content="Forrit sem skráir drykkju Mjölnismanna">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Write">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Drykkja</title>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -24,7 +20,8 @@
       <span class="Grid-cell remove"></span>
       <span class="Grid-cell menu"></span>
     </header>
-    <div id="drinkers">
+    <div id="players">
+      Sæki leikmenn&hellip;
     </div>
     <p id="total"></p>
     <footer>
@@ -35,7 +32,7 @@
   </section>
   <div class="overlay js-overlay"></div>
   <script id="person" type="x-tmpl-mustache">
-    {{#drinkers}}
+    {{#players}}
     <article class="Grid">
       <span class="Grid-cell name">{{name}}</span>
       <span class="Grid-cell beer">{{practiceBeerCount}} - {{beerCount}}</span>
@@ -44,11 +41,10 @@
       <div class="Grid-cell js-menu menu">&hellip;
         <div class="menu-wrapper hide">
           <span class="rename" data-id="{{id}}">Laga nafn</span>
-          <span class="delete" data-id="{{id}}">Eyða af lista</span>
         </div>
       </div>
     </article>
-    {{/drinkers}}
+    {{/players}}
   </script>
   <script id="totalTemplate" type="x-tmpl-mustache">
     Samtals: {{beers}}kr.
@@ -56,15 +52,35 @@
   <script id="emailTemplate" type="x-tmpl-mustache">
 # Bjór drykkja: {{date}}
 
-{{#drinkers}}
+{{#players}}
 {{name}} með {{beerCount}} {{beerText}} sem gera {{debt}}
-{{/drinkers}}
+{{/players}}
   
 Samtals: {{totalAmount}}kr.
   </script>
+  <script id="loginTemplate" type="x-tmpl-mustache">
+    <h1>Skuldalisti Mjölnis</h1>
+    <input type="text" id="email" name="email" placeholder="Email"/>
+    <input type="password" id="password" name="password" placeholder="Lykilorð"/>
+    <br/>
+    <button id="sign-in" name="signin" type="button">Innskrá</button>
+  </script>
+  <script id="addPlayerTemplate" type="x-tmpl-mustache">
+    <input type="text" name="player" id="playerName" placeholder="Nafn leikmanns" value="{{name}}">
+    <button id="addPlayer" name="addPlayer" type="button">Geyma</button>
+    <button id="cancelAddPlayer" name="cancelAddPlayer" type="button">Nei</button>
+  </script>
+
+  <!-- Import and configure the Firebase SDK -->
+  <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
+  <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+  <script src="/__/firebase/4.3.1/firebase-app.js"></script>
+  <script src="/__/firebase/4.3.1/firebase-auth.js"></script>
+  <script src="/__/firebase/4.3.1/firebase-database.js"></script>
+  <script src="/__/firebase/init.js"></script>
+
   <script src="mustache.min.js"></script>
   <script src="microbe.min.js"></script>
-  <script src="fastclick.js"></script>
   <script src="main.js"></script>
 </body>
 </html>
