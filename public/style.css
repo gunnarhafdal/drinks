@@ -17,7 +17,8 @@ body { font-family: Helvetica, Arial, sans-serif; font-size: 1.5rem; margin: 20p
 
 .loggedout header,
 .loggedout footer,
-.loggedout #total {
+.loggedout #total,
+.loggedout #practiceTotal {
   display: none;
 }
 
@@ -50,6 +51,12 @@ footer {
 #total {
   text-align: center;
   font-style: italic;
+}
+
+#practiceTotal {
+  text-align: center;
+  font-style: italic;
+  font-weight: bold;
 }
 
 .button, button {

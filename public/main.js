@@ -147,7 +147,7 @@ function renderList () {
   console.log("Render list");
   var data = {players: []};
 
-  var playersRef = firebase.database().ref('players');
+  var playersRef = firebase.database().ref('players').orderByChild('name');
   playersRef.once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       var childKey = childSnapshot.key;
@@ -161,6 +161,7 @@ function renderList () {
   document.querySelector('#players').innerHTML = rendered;
 
   var totalBeers = 0;
+  var practiceTotalBeers = 0;
   data.players.forEach(function(person){
     if (!person.hasOwnProperty('practiceBeerCount')) {
       person.practiceBeerCount = 0;
@@ -171,10 +172,14 @@ function renderList () {
     }
     
     totalBeers = totalBeers + parseInt(person.beerCount);
+    practiceTotalBeers = practiceTotalBeers + parseInt(person.practiceBeerCount);
   });
 
   var totalRendered = Mustache.render(totalTemplate, {beers: totalBeers*10});
   document.querySelector('#total').innerHTML = totalRendered;
+
+  var practiceTotalRendered = Mustache.render(practiceTotalTemplate, {beers: practiceTotalBeers*10});
+  document.querySelector('#practiceTotal').innerHTML = practiceTotalRendered;
 
   // then we add them again
   m('.beerup').on('click', addBeer);
@@ -269,6 +274,8 @@ function setup () {
   Mustache.parse(template);
   totalTemplate = document.querySelector('#totalTemplate').innerHTML;
   Mustache.parse(totalTemplate);
+  practiceTotalTemplate = document.querySelector('#practiceTotalTemplate').innerHTML;
+  Mustache.parse(practiceTotalTemplate);
   emailTemplate = document.querySelector('#emailTemplate').innerHTML;
   Mustache.parse(emailTemplate);
   loginTemplate = document.querySelector('#loginTemplate').innerHTML;
