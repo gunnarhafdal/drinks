@@ -12,6 +12,35 @@ var m = µ;
 
 var template, totalTemplate, emailTemplate, loginTemplate, addPlayerTemplate;
 
+function payBeer(e) {
+  var id = e.target.getAttribute("data-id");
+  return firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
+    var name = (snapshot.val() && snapshot.val().name) || '';
+    if (!confirm('🤑 Borga skuld hjá ' + name + '! Ertu viss?')) {
+      return false;
+    }
+    var updates = {};
+    updates['players/' + id +'/beerCount'] = 0;
+    updates['players/' + id +'/practiceBeerCount'] = 0;
+    return firebase.database().ref().update(updates);
+  });
+}
+
+function paySeason(e) {
+  var id = e.target.getAttribute("data-id");
+  console.log(id);
+  return firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
+    var name = (snapshot.val() && snapshot.val().name) || '';
+    if (!confirm('🤑 Borga æfingagjöld hjá ' + name + '! Ertu viss?')) {
+      return false;
+    }
+    var updates = {};
+    updates['players/' + id +'/paidAutumn'] = true;
+    updates['players/' + id +'/paidSpring'] = true;
+    return firebase.database().ref().update(updates);
+  });
+}
+
 function addPerson() {
   var rendered = Mustache.render(addPlayerTemplate, {});
   document.querySelector('#players').innerHTML = rendered;
@@ -48,11 +77,15 @@ function addPerson() {
 }
 
 function removePerson(e) {
-  if (!confirm('Ertu viss?')) {
-    return false;
-  }
   var id = e.target.getAttribute("data-id");
-  return firebase.database().ref('players/' + id).remove();
+  firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
+    var name = (snapshot.val() && snapshot.val().name) || '';
+    if (!confirm('Eyða ' + name + ' af listanum! Ertu viss?')) {
+      return false;
+    }
+    return firebase.database().ref('players/' + id).remove();
+  });
+
 } 
 
 function renamePerson (e) {
@@ -162,15 +195,8 @@ function renderList () {
 
   var totalBeers = 0;
   var practiceTotalBeers = 0;
-  data.players.forEach(function(person){
-    if (!person.hasOwnProperty('practiceBeerCount')) {
-      person.practiceBeerCount = 0;
-    }
 
-    if (!person.practiceBeerCount) {
-      person.practiceBeerCount = 0;
-    }
-    
+  data.players.forEach(function(person){
     totalBeers = totalBeers + parseInt(person.beerCount);
     practiceTotalBeers = practiceTotalBeers + parseInt(person.practiceBeerCount);
   });
@@ -186,6 +212,8 @@ function renderList () {
   m('.beerdown').on('click', removeBeer);
   m('.rename').on('click', renamePerson);
   m('.delete').on('click', removePerson);
+  m('.payBeer').on('click', payBeer);
+  m('.paySeason').on('click', paySeason);
   m('.js-menu').on('click', function(e) {
     var wrapper = this.querySelector('.menu-wrapper');
 
