@@ -1,0 +1,210 @@
+html {
+-ms-touch-action: manipulation;
+touch-action: manipulation;
+}
+html,body { font-size: 100%; }
+body { font-family: Helvetica, Arial, sans-serif; font-size: 1.5rem; margin: 20px; text-align: center;}
+:focus {outline: 0;}
+.beerup, .beerdown, .delete, .rename, .menu, .button, button {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.loggedout header,
+.loggedout footer,
+.loggedout #total,
+.loggedout #practiceTotal {
+  display: none;
+}
+
+.beerup {
+  color: darkgreen;
+  font-size: 1.6rem;
+}
+
+.beerdown {
+  color: maroon;
+  font-size: 1.6rem;  
+}
+
+header h1 {
+  margin-top: 0;
+}
+
+footer {
+  margin-top: 40px;
+}
+
+.thead {
+  font-size: 1.2rem;
+}
+
+#drinkers {
+  margin-top: 20px;
+}
+
+#total {
+  text-align: center;
+  font-style: italic;
+}
+
+#practiceTotal {
+  text-align: center;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.button, button {
+  display: inline-block;
+  padding: 20px;
+  background-color: #c0ffee;
+  margin-bottom: 10px;
+}
+
+input {
+  border: 1px solid black;
+  border-radius: 0;
+  font-size: 24px;
+  height: 62px;
+  padding: 0 10px;
+  width: calc(100% - 40px);
+  margin-bottom: 10px;
+  display: block;
+}
+
+button {
+  bordeR: 0;
+  font-size: 24px;
+}
+
+#sendList {
+  margin-bottom: 20px;
+}
+
+.Grid {
+  display: -webkit-flex;
+  display: flex;
+}
+.Grid:nth-child(even) {
+  background-color: #DFFDFC;
+}
+.Grid-cell {
+  -webkit-flex: 1;
+  flex: 1;
+  display: inline-block;
+  min-height: 50px;
+  line-height: 50px;
+}
+
+
+
+.name {
+  text-align: left;
+}
+
+.paidSpring .name:after {
+  content: " ✓";
+}
+
+.beer {
+  -webkit-flex: 0 0 20%;
+  flex: 0 0 20%;
+}
+.add {
+  -webkit-flex: 0 0 15%;
+  flex: 0 0 15%;
+}
+.remove {
+  -webkit-flex: 0 0 15%;
+  flex: 0 0 15%;
+}
+.menu {
+  -webkit-flex: 0 0 15%;
+  flex: 0 0 15%;
+  position: relative;
+  line-height: 36px;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  background-color: #c0ffee;
+  opacity: 0.3;
+}
+
+.show-overlay .overlay {
+  display: block;
+}
+
+.menu-wrapper {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  padding: 10px;
+  border: 1px solid #000;
+  background-color: #fff;
+  z-index: 10;
+}
+
+.rename, .delete, .paySeason, .payBeer {
+  cursor: pointer;
+  display: block;
+  min-height: 50px;
+  line-height: 50px;
+}
+.delete {
+  color: #fff;
+  background-color: #f00;
+}
+
+.hide {
+  display: none;
+}
+
+/* With gutters */
+.Grid--gutters {
+  margin: -1em 0 0 -1em;
+}
+.Grid--gutters > .Grid-cell {
+  padding: 1em 0 0 1em;
+}
+
+/* Alignment per row */
+.Grid--top {
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+}
+.Grid--bottom {
+  -webkit-align-items: flex-end;
+  align-items: flex-end;
+}
+.Grid--center {
+  -webkit-align-items: center;
+  align-items: center;
+}
+
+/* Alignment per cell */
+.Grid-cell--top {
+  -webkit-align-self: flex-start;
+  align-self: flex-start;
+}
+.Grid-cell--bottom {
+  -webkit-align-self: flex-end;
+  align-self: flex-end;
+}
+.Grid-cell--center {
+  -webkit-align-self: center;
+  align-self: center;
+}
