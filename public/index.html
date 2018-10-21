@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="author" content="Gunnar Hafdal - gunnarhafdal.com">
+  <meta name="description" content="Forrit sem skráir drykkju Mjölnismanna">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mjölnis Æfingar</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Mjölnis Æfingar</h1>
+    <nav>
+      <a href="/index.html">Æfingar</a> — <a href="/new.html">Ný æfing</a> — <a href="/players.html">Leikmenn</a>
+    </nav>
+  </header>
+
+  <section class="practices">
+    <h2>Sæki æfingar&hellip;</h2>
+  </section>
+
+  <template id="practice-list">
+    <ul>
+    {{#practices}}
+      <li><a href="/practice.html?id={{id}}">{{name}} — {{date}}</a></li>
+    {{/practices}}
+    </ul>
+  </template>
+
+  <script src="/__/firebase/5.5.5/firebase-app.js"></script>
+  <script src="/__/firebase/5.5.5/firebase-auth.js"></script>
+  <script src="/__/firebase/5.5.5/firebase-database.js"></script>
+  <script src="/__/firebase/init.js"></script>
+  <script src="handlebars-v4.0.12.js"></script>
+  <script src="microbe.min.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
