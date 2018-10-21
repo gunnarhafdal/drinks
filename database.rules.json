@@ -1,6 +1,15 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        "practices": {
+          ".indexOn": "date"
+        } 
+      }
+    }
   }
 }

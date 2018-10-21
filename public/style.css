@@ -107,7 +107,7 @@ button {
   text-align: left;
 }
 
-.paidSpring .name:after {
+.paid .name:after {
   content: " ✓";
 }
 

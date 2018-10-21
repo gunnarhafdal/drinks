@@ -1,51 +1,87 @@
-Array.prototype.removeAt = function(id) {
-    for (var item in this) {
-        if (this[item].id == id) {
-            this.splice(item, 1);
-            return true;
-        }
-    }
-    return false;
-}
-
 var m = µ;
 
-var template, totalTemplate, emailTemplate, loginTemplate, addPlayerTemplate;
+var template, totalTemplate, loginTemplate, addPlayerTemplate, addDebitTemplate;
 
-function payBeer(e) {
-  var id = e.target.getAttribute("data-id");
-  return firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
-    var name = (snapshot.val() && snapshot.val().name) || '';
-    if (!confirm('🤑 Borga skuld hjá ' + name + '! Ertu viss?')) {
-      return false;
+var userRef = "";
+var practiceRef = "";
+var practice = {};
+
+function addComment() {
+  var comment = practice.comment;
+  var rendered = commentTemplate({comment: comment});
+  document.querySelector('#players').innerHTML = rendered;
+
+  document.getElementById('comment').focus();
+
+  m("#saveComment").on('click', function(){
+    var comment = document.getElementById('comment').value;
+    if(comment.length === 0) {
+      return
     }
-    var updates = {};
-    updates['players/' + id +'/beerCount'] = 0;
-    updates['players/' + id +'/practiceBeerCount'] = 0;
-    return firebase.database().ref().update(updates);
+    
+    practice.comment = comment;
+
+    m("#saveComment").off('click');
+    m("#cancelComment").off('click');
+    renderList();
+  });
+
+  m("#cancelComment").on('click', function(){
+    m("#saveComment").off('click');
+    m("#cancelComment").off('click');
+    renderList();
+  });
+}
+
+function addDebit(e) {
+  var id = parseInt(e.target.getAttribute("data-id"));
+  var name = practice.players[id].name;
+  var rendered = addDebitTemplate({name: name});
+  document.querySelector('#players').innerHTML = rendered;
+
+  document.getElementById('debit').focus();
+
+  m("#addDebit").on('click', function(){
+    var debitString = document.getElementById('debit').value;
+    if(debitString.length === 0) {
+      return
+    }
+
+    var debit = parseInt(debitString);
+
+    if(isNaN(debit)) {
+      return
+    }
+    
+    practice.players[id].debit = debit;
+
+    m("#addDebit").off('click');
+    m("#cancelAddDebit").off('click');
+    renderList();
+  });
+
+  m("#cancelAddDebit").on('click', function(){
+    m("#addDebit").off('click');
+    m("#cancelAddDebit").off('click');
+    renderList();
   });
 }
 
 function paySeason(e) {
-  var id = e.target.getAttribute("data-id");
-  console.log(id);
-  return firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
-    var name = (snapshot.val() && snapshot.val().name) || '';
-    if (!confirm('🤑 Borga æfingagjöld hjá ' + name + '! Ertu viss?')) {
-      return false;
-    }
-    var updates = {};
-    updates['players/' + id +'/paidAutumn'] = true;
-    updates['players/' + id +'/paidSpring'] = true;
-    return firebase.database().ref().update(updates);
-  });
+  var id = parseInt(e.target.getAttribute("data-id"));
+  var name = practice.players[id].name;
+  if (!confirm('🤑 Borga æfingagjöld hjá ' + name + '! Ertu viss?')) {
+    return false;
+  }
+  practice.players[id].paid = true;
+  renderList();
 }
 
 function addPerson() {
-  var rendered = Mustache.render(addPlayerTemplate, {});
+  var rendered = addPlayerTemplate({});
   document.querySelector('#players').innerHTML = rendered;
 
-  document.getElementById('playerName').focus()
+  document.getElementById('playerName').focus();
 
   m("#addPlayer").on('click', function(){
     var name = document.getElementById('playerName').value;
@@ -53,16 +89,13 @@ function addPerson() {
       return
     }
 
-    var peopleRef = firebase.database().ref('players/');
-    var newPersonRef = peopleRef.push();
-
-    newPersonRef.set({
+    practice.players.push({
       name: name,
-      beerCount: 0,
-      practiceBeerCount: 0,
-      paidAutumn: false,
-      paidSpring: false
-    });
+      beers: 0,
+      debit: 0,
+      paid: false
+    })
+
     console.log(name, "added to list");
     m("#addPlayer").off('click');
     m("#cancelAddPlayer").off('click');
@@ -76,143 +109,71 @@ function addPerson() {
   });
 }
 
-function removePerson(e) {
-  var id = e.target.getAttribute("data-id");
-  firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
-    var name = (snapshot.val() && snapshot.val().name) || '';
-    if (!confirm('Eyða ' + name + ' af listanum! Ertu viss?')) {
-      return false;
+function renamePerson (e) {
+  var id = parseInt(e.target.getAttribute("data-id"));
+  var name = practice.players[id].name;
+
+  var rendered = addPlayerTemplate({name: name});
+  document.querySelector('#players').innerHTML = rendered;
+  document.getElementById('playerName').focus();
+
+  m("#addPlayer").on('click', function(){
+    var newName = document.getElementById('playerName').value;
+    if(newName.length === 0) {
+      return
     }
-    return firebase.database().ref('players/' + id).remove();
+    
+    practice.players[id].name = newName;
+    
+    m("#addPlayer").off('click');
+    m("#cancelAddPlayer").off('click');
+    renderList();
   });
 
-} 
-
-function renamePerson (e) {
-  var id = e.target.getAttribute("data-id");
-  firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
-    var name = (snapshot.val() && snapshot.val().name) || '';
-    var rendered = Mustache.render(addPlayerTemplate, {name: name});
-    document.querySelector('#players').innerHTML = rendered;
-    document.getElementById('playerName').focus();
-
-    m("#addPlayer").on('click', function(){
-      var newName = document.getElementById('playerName').value;
-      if(newName.length === 0) {
-        return
-      }
-      
-      var updates = {};
-      updates['players/' + id +'/name'] = newName;
-      firebase.database().ref().update(updates);
-      
-      m("#addPlayer").off('click');
-      m("#cancelAddPlayer").off('click');
-      renderList();
-    });
-  
-    m("#cancelAddPlayer").on('click', function(){
-      m("#addPlayer").off('click');
-      m("#cancelAddPlayer").off('click');
-      renderList();
-    });
+  m("#cancelAddPlayer").on('click', function(){
+    m("#addPlayer").off('click');
+    m("#cancelAddPlayer").off('click');
+    renderList();
   });
 }
 
 function addBeer (e) {
-  var id = e.target.getAttribute("data-id");
-  return firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
-    var beerCount = (snapshot.val() && snapshot.val().beerCount) || 0;
-    var practiceBeerCount = (snapshot.val() && snapshot.val().practiceBeerCount) || 0;
-
-    var updates = {};
-    updates['players/' + id +'/beerCount'] = parseInt(beerCount) + 1;
-    updates['players/' + id +'/practiceBeerCount'] = parseInt(practiceBeerCount) + 1;
-    return firebase.database().ref().update(updates);
-  });
+  var id = parseInt(e.target.getAttribute("data-id"));
+  var beerCount = practice.players[id].beers;
+  practice.players[id].beers = parseInt(beerCount) + 1;
+  renderList();
 }
 
 function removeBeer (e) {
-  var id = e.target.getAttribute("data-id");
-  return firebase.database().ref('players/' + id).once('value').then(function(snapshot) {
-    var beerCount = (snapshot.val() && snapshot.val().beerCount) || 0;
-    var practiceBeerCount = (snapshot.val() && snapshot.val().practiceBeerCount) || 0;
-
-    var updates = {};
-    updates['players/' + id +'/beerCount'] = parseInt(beerCount) - 1;
-    updates['players/' + id +'/practiceBeerCount'] = parseInt(practiceBeerCount) - 1;
-    return firebase.database().ref().update(updates);
-  });
+  var id = parseInt(e.target.getAttribute("data-id"));
+  var beerCount = practice.players[id].beers;
+  practice.players[id].beers = parseInt(beerCount) - 1;
+  renderList();
 }
 
-function resetList (e) {
-  if (!confirm('Ertu viss?')) {
-    return false;
-  }
-  var updates = {};
-  var playersRef = firebase.database().ref('players');
-  playersRef.once('value', function(snapshot) {
-    snapshot.forEach(function(childSnapshot) {
-      var childKey = childSnapshot.key;
-      updates['players/' + childKey +'/beerCount'] = 0;
-      updates['players/' + childKey +'/practiceBeerCount'] = 0;
-    });
-  });
-  return firebase.database().ref().update(updates);
-}
-
-function resetPracticeList (e) {
-  if (!confirm('Ertu viss?')) {
-    return false;
-  }
-  var updates = {};
-  var playersRef = firebase.database().ref('players');
-  playersRef.once('value', function(snapshot) {
-    snapshot.forEach(function(childSnapshot) {
-      var childKey = childSnapshot.key;
-      updates['players/' + childKey +'/practiceBeerCount'] = 0;
-    });
-  });
-  return firebase.database().ref().update(updates);
-}
 
 function renderList () {  
   console.log("Render list");
-  var data = {players: []};
+  var dateString = new Date(practice.date);
 
-  var playersRef = firebase.database().ref('players').orderByChild('name');
-  playersRef.once('value', function(snapshot) {
-    snapshot.forEach(function(childSnapshot) {
-      var childKey = childSnapshot.key;
-      var childData = childSnapshot.val();
-      childData.id = childKey
-      data.players.push(childData);
-    });
-  });
+  document.querySelector('#date').innerText = "Æfing fyrir " + dateString.toDateString();
 
-  var rendered = Mustache.render(template, data);
+  var rendered = template(practice);
   document.querySelector('#players').innerHTML = rendered;
 
   var totalBeers = 0;
-  var practiceTotalBeers = 0;
 
-  data.players.forEach(function(person){
-    totalBeers = totalBeers + parseInt(person.beerCount);
-    practiceTotalBeers = practiceTotalBeers + parseInt(person.practiceBeerCount);
+  practice.players.forEach(function(person){
+    totalBeers = totalBeers + parseInt(person.beers);
   });
 
-  var totalRendered = Mustache.render(totalTemplate, {beers: totalBeers*10});
+  var totalRendered = totalTemplate({beers: totalBeers*10});
   document.querySelector('#total').innerHTML = totalRendered;
 
-  var practiceTotalRendered = Mustache.render(practiceTotalTemplate, {beers: practiceTotalBeers*10});
-  document.querySelector('#practiceTotal').innerHTML = practiceTotalRendered;
-
-  // then we add them again
   m('.beerup').on('click', addBeer);
   m('.beerdown').on('click', removeBeer);
   m('.rename').on('click', renamePerson);
-  m('.delete').on('click', removePerson);
-  m('.payBeer').on('click', payBeer);
+  m('.addDebit').on('click', addDebit);
   m('.paySeason').on('click', paySeason);
   m('.js-menu').on('click', function(e) {
     var wrapper = this.querySelector('.menu-wrapper');
@@ -229,43 +190,6 @@ function renderList () {
 
 }
 
-function sendList () {
-  var data = {players: []};
-  
-  var playersRef = firebase.database().ref('players');
-  playersRef.once('value', function(snapshot) {
-    snapshot.forEach(function(childSnapshot) {
-      var childKey = childSnapshot.key;
-      var childData = childSnapshot.val();
-      childData.id = childKey
-      data.players.push(childData);
-    });
-  });
-
-  var totalBeers = 0;
-  data.players.forEach(function(person){
-    totalBeers = totalBeers + parseInt(person.beerCount);
-  });
-
-  var view = {
-    totalAmount: totalBeers*10,
-    players: data.players, 
-    date: date,
-    debt: function(){
-      var price = this.beerCount * 10;
-      return price+"kr";
-    },
-    beerText: function() {
-      return  (this.beerCount % 10 !== 1 || this.beerCount % 100 === 11) ? "bjóra" : "bjór";
-    }
-  };
-
-  var date = new Date();
-  var emailBody = Mustache.render(emailTemplate, view);
-  
-  var link = "mailto:" + "?subject="+encodeURIComponent("Drykkja: " + date) + "&body=" + encodeURIComponent(emailBody);
-  window.location.href = link;  
-}
 
 function logIn() {
   var email = document.getElementById('email').value;
@@ -296,25 +220,39 @@ function logIn() {
   // [END authwithemail]
 }
 
+function savePractice () {
+  if (!confirm('Geyma æfingu! Ertu viss?')) {
+    return false;
+  }
+
+  // create a new practice, add it to the db and get its ID
+  var practicesReg = firebase.database().ref(userRef + '/practices');
+  var newPracticeRef = practicesReg.push();
+  newPracticeRef.set({
+    date: practice.date,
+    comment: practice.comment,
+    players: practice.players
+  }, function(error) {
+    if (error) {
+      console.log(error);
+    } else {
+      window.location = "/";
+    }
+  });
+}
+
 
 function setup () {
-  template = document.querySelector('#person').innerHTML;
-  Mustache.parse(template);
-  totalTemplate = document.querySelector('#totalTemplate').innerHTML;
-  Mustache.parse(totalTemplate);
-  practiceTotalTemplate = document.querySelector('#practiceTotalTemplate').innerHTML;
-  Mustache.parse(practiceTotalTemplate);
-  emailTemplate = document.querySelector('#emailTemplate').innerHTML;
-  Mustache.parse(emailTemplate);
-  loginTemplate = document.querySelector('#loginTemplate').innerHTML;
-  Mustache.parse(loginTemplate);
-  addPlayerTemplate = document.querySelector('#addPlayerTemplate').innerHTML;
-  Mustache.parse(addPlayerTemplate);
+  template = Handlebars.compile(document.querySelector('#person').innerHTML);
+  totalTemplate = Handlebars.compile(document.querySelector('#totalTemplate').innerHTML);
+  loginTemplate = Handlebars.compile(document.querySelector('#loginTemplate').innerHTML);
+  addPlayerTemplate = Handlebars.compile(document.querySelector('#addPlayerTemplate').innerHTML);
+  addDebitTemplate = Handlebars.compile(document.querySelector('#addDebitTemplate').innerHTML);
+  commentTemplate = Handlebars.compile(document.querySelector('#commentTemplate').innerHTML);
 
   m('#addPerson').on('click', addPerson);
-  m('#resetList').on('click', resetList);
-  m('#resetPracticeList').on('click', resetPracticeList);
-  m('#sendList').on('click', sendList);
+  m('#savePractice').on('click', savePractice);
+  m('#addComment').on('click', addComment);
 
   m('.js-overlay').on('click', function(e){
     m('.menu-wrapper').addClass('hide');
@@ -327,33 +265,40 @@ function setup () {
     document.querySelector('#players').innerHTML = ""
     // [END_EXCLUDE]
     if (user) {
+      userRef = '/users/' + user.uid;
       m('#sign-in').off('click', logIn);
-      // User is signed in.
-      //uid = user.uid;
-      // [START_EXCLUDE]
-      var playersRef = firebase.database().ref('players');
-      playersRef.on('child_added', function(data) {
-        console.log("added", data.key, data.val());
-        renderList();
-      });
-      
-      playersRef.on('child_changed', function(data) {
-        console.log("changed", data.key, data.val());
-        renderList();
-      });
-      
-      playersRef.on('child_removed', function(data) {
-        console.log("delete", data.key);
-        renderList();
-      });
 
-      m("body").removeClass("loggedout");
+      return firebase.database().ref(`${userRef}/practices`).orderByChild('date').limitToLast(1).once('value').then(function(snapshot) {
+        var players = [];
+        snapshot.forEach((child) => {
+          console.log(child.key, child.val());
+          if(child.val().players) {
+            players = child.val().players;
+            players.forEach(function(player) {
+              player.beers = 0;
+              player.debit = 0;
+            });
+          }
+        });
+
+        var now = new Date();
+        practice = {
+          date: now.getTime(),
+          comment: "",
+          players: players
+        };
+        renderList();
+
+        m("body").removeClass("loggedout");
+      });
+      // [START_EXCLUDE]
+      
 
       // [END_EXCLUDE]
     } else {
       // User is signed out.
       m("body").addClass("loggedout");
-      var rendered = Mustache.render(loginTemplate, {});
+      var rendered = loginTemplate({});
       document.querySelector('#players').innerHTML = rendered;
       m('#sign-in').on('click', logIn);
     }
