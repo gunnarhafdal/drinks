@@ -98,7 +98,7 @@ function paySeason(e) {
     } 
   });
 
-  if (!confirm('🤑 Borga æfingagjöld hjá ' + name + '! Ertu viss?')) {
+  if (!confirm(`🤑 Ætlar ${name} að borga æfingargjöldin núna?`)) {
     return false;
   }
 

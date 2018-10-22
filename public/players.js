@@ -1,13 +1,17 @@
 var template = {};
+var m = µ;
+var playersList = [];
+var userId = "";
 
 const renderPlayers = (snapshot) => {
   const players = snapshot.child('players');
   const practices = snapshot.child('practices');
-  var playersList = [];
+  playersList = [];
   players.forEach((player) => {
     var newPlayer = {
+      key: player.key,
       name: player.val().name,
-      paid: player.val().paid ? "Já" : "Nei",
+      paid: player.val().paid,
       beers: 0,
       debit: 0
     };
@@ -29,10 +33,37 @@ const renderPlayers = (snapshot) => {
   var data = {
     players: playersList
   }
-  console.log(data);
-  console.log(template(data))
   document.querySelector('.players').innerHTML = template(data);
-  
+  m('.payPlayerSeason').on('click', payPlayerSeason);
+}
+
+const payPlayerSeason = (e) => {
+  e.preventDefault();
+  var key = e.target.dataset.key;
+
+  var name = "";
+  playersList.forEach(function(player){
+    if(player.key === key) {
+      name = player.name;
+    } 
+  });
+
+  if (!confirm(`🤑 Ætlar ${name} að borga æfingargjöldin núna?`)) {
+    return false;
+  }
+
+  var updates = {};
+    updates[`users/${userId}/players/${key}/paid`] = true;
+    return firebase.database().ref().update(updates, function(error) {
+    if (error) {
+      console.log(error);
+      return
+    } else {
+      firebase.database().ref(`users/${userId}`).once('value').then(function(snapshot) {
+        renderPlayers(snapshot)
+      });
+    }
+  });
 }
 
 const setup = () => {
@@ -45,7 +76,8 @@ const setup = () => {
     
     // [END_EXCLUDE]
     if (user) {
-      return firebase.database().ref(`users/${user.uid}`).once('value').then(function(snapshot) {
+      userId = user.uid;
+      return firebase.database().ref(`users/${userId}`).once('value').then(function(snapshot) {
         renderPlayers(snapshot)
       });
     } else {

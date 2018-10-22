@@ -27,7 +27,12 @@
         <b>{{name}}</b><br>
         Bjórar: {{beers}}<br>
         Inneign: {{debit}}<br>
-        Búinn að borga æfingargjöld: {{paid}}<br>
+        {{#if paid}}
+          Búinn að borga æfingargjöld 👍
+        {{else}}
+          Á eftir að borga æfingagjöld. <a href="#" class="payPlayerSeason" data-key="{{key}}">Borga</a>
+        {{/if}}
+        <br>
       </li>
     {{/players}}
     </ul>
