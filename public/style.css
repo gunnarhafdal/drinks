@@ -208,3 +208,8 @@ button {
   -webkit-align-self: center;
   align-self: center;
 }
+
+.players, .practices {
+  text-align: left;
+
+}
