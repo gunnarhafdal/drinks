@@ -27,8 +27,17 @@ function addComment() {
 
 function addDebit(e) {
   var id = parseInt(e.target.getAttribute("data-id"));
-  var name = practice.players[id].name;
-  var rendered = addDebitTemplate({name: name});
+  var key = practice.players[id].key;
+  var name = "";
+  players.forEach(function(player){
+    if(player.key === key) {
+      name = player.name;
+    } 
+  });
+
+  var debitValue = practice.players[id].debit === 0 ? "" : `${practice.players[id].debit}`
+
+  var rendered = addDebitTemplate({name: name, debit: debitValue});
   document.querySelector('#players').innerHTML = rendered;
 
   document.getElementById('debit').focus();
@@ -61,11 +70,18 @@ function addDebit(e) {
 
 function paySeason(e) {
   var id = parseInt(e.target.getAttribute("data-id"));
-  var name = practice.players[id].name;
+  var key = practice.players[id].key;
+
+  var name = "";
+  players.forEach(function(player){
+    if(player.key === key) {
+      name = player.name;
+    } 
+  });
+
   if (!confirm('🤑 Borga æfingagjöld hjá ' + name + '! Ertu viss?')) {
     return false;
   }
-  var key = practice.players[id].key;
 
   var updates = {};
     updates[userRef + '/players/' + key +'/paid'] = true;
@@ -136,7 +152,14 @@ function addPerson() {
 
 function renamePerson (e) {
   var id = parseInt(e.target.getAttribute("data-id"));
-  var name = practice.players[id].name;
+  var key = practice.players[id].key;
+
+  var name = "";
+  players.forEach(function(player){
+    if(player.key === key) {
+      name = player.name;
+    } 
+  });
 
   var rendered = addPlayerTemplate({name: name});
   document.querySelector('#players').innerHTML = rendered;
@@ -148,8 +171,6 @@ function renamePerson (e) {
       return
     }
     
-    var key = practice.players[id].key;
-
     var updates = {};
     updates[userRef + '/players/' + key +'/name'] = newName;
     return firebase.database().ref().update(updates, function(error) {
