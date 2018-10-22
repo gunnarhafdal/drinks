@@ -90,22 +90,36 @@ function setup () {
       m('#sign-in').off('click', logIn);
 
       return firebase.database().ref(`${userRef}/practices/${practiceKey}`).once('value').then(function(practiceSnapshot) {
-        
-        console.log(practiceSnapshot, practiceSnapshot.key, practiceSnapshot.val());
 
         firebase.database().ref(`${userRef}/players`).once('value').then(function(playersSnapshot) {
+          var practicePlayers = [];
           playersSnapshot.forEach((child) => {
             players.push({
               key: child.key,
               name: child.val().name,
               paid: child.val().paid
             });
+
+            practicePlayers.push({
+              key: child.key,
+              beers: 0,
+              debit: 0
+            });
+          });
+
+          practicePlayers.forEach((practicePlayer) => {
+            practiceSnapshot.val().players.forEach((snapshotPlayer) => {
+              if(snapshotPlayer.key === practicePlayer.key) {
+                practicePlayer.beers = snapshotPlayer.beers;
+                practicePlayer.debit = snapshotPlayer.debit;
+              }
+            });
           });
   
           practice = {
             date: practiceSnapshot.val().date,
             comment: practiceSnapshot.val().comment,
-            players: practiceSnapshot.val().players
+            players: practicePlayers
           };
 
           players.sort(compareNames);
