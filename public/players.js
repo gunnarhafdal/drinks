@@ -23,7 +23,8 @@ const renderPlayers = (snapshot) => {
 
     playersList.push(newPlayer);
   });
-  console.log(playersList.length);
+  
+  playersList.sort(compareNames);
 
   var data = {
     players: playersList

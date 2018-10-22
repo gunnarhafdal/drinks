@@ -107,6 +107,10 @@ function setup () {
             comment: practiceSnapshot.val().comment,
             players: practiceSnapshot.val().players
           };
+
+          players.sort(compareNames);
+          practice.players.sort(compareNames);
+          console.log(practice.players);
           renderList();
   
           m("body").removeClass("loggedout");

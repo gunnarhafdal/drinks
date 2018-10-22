@@ -19,7 +19,7 @@
   <section>
     <header class="Grid thead">
       <span class="Grid-cell name">👨🏻</span>
-      <span class="Grid-cell beer">🍺 - 🍻</span>
+      <span class="Grid-cell beer">🍺</span>
       <span class="Grid-cell add"></span>
       <span class="Grid-cell remove"></span>
       <span class="Grid-cell menu"></span>
@@ -42,14 +42,14 @@
     <article class="Grid {{#paid}}paid{{/paid}}">
       <span class="Grid-cell name">{{name}}</span>
       <span class="Grid-cell beer">{{beers}}</span>
-      <span class="Grid-cell add"><span class="beerup" data-id="{{@index}}">＋</span></span>
-      <span class="Grid-cell remove"><span class="beerdown" data-id="{{@index}}">－</span></span>
+      <span class="Grid-cell add"><span class="beerup" data-key="{{key}}">＋</span></span>
+      <span class="Grid-cell remove"><span class="beerdown" data-key="{{key}}">－</span></span>
       <span class="Grid-cell debit">{{debit}}kr.</span>
       <div class="Grid-cell js-menu menu">&hellip;
         <div class="menu-wrapper hide">
-          <span class="addDebit" data-id="{{@index}}">Leggja inná</span>
-          <span class="paySeason" data-id="{{@index}}">Borga æfingagjöld</span>
-          <span class="rename" data-id="{{@index}}">Laga nafn</span>
+          <span class="addDebit" data-key="{{key}}">Leggja inná</span>
+          <span class="paySeason" data-key="{{key}}">Borga æfingagjöld</span>
+          <span class="rename" data-key="{{key}}">Laga nafn</span>
         </div>
       </div>
     </article>

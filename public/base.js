@@ -1,3 +1,11 @@
+function compareNames(a,b) {
+  if (a.name < b.name)
+    return -1;
+  if (a.name > b.name)
+    return 1;
+  return 0;
+}
+
 function addComment() {
   var comment = practice.comment;
   var rendered = commentTemplate({comment: comment});
@@ -26,18 +34,26 @@ function addComment() {
 }
 
 function addDebit(e) {
-  var id = parseInt(e.target.getAttribute("data-id"));
-  var key = practice.players[id].key;
+  var key = e.target.dataset.key;
   var name = "";
+  var currentDebitValue = 0;
+
   players.forEach(function(player){
     if(player.key === key) {
       name = player.name;
     } 
   });
 
-  var debitValue = practice.players[id].debit === 0 ? "" : `${practice.players[id].debit}`
+  practice.players.forEach(function(player){
+    if(player.key === key) {
+      currentDebitValue = player.debit;
+    } 
+  });
+  
 
-  var rendered = addDebitTemplate({name: name, debit: debitValue});
+  var currentDebitString = currentDebitValue === 0 ? "" : `${currentDebitValue}`
+
+  var rendered = addDebitTemplate({name: name, debit: currentDebitString});
   document.querySelector('#players').innerHTML = rendered;
 
   document.getElementById('debit').focus();
@@ -53,8 +69,12 @@ function addDebit(e) {
     if(isNaN(debit)) {
       return
     }
-    
-    practice.players[id].debit = debit;
+
+    practice.players.forEach(function(player){
+      if(player.key === key) {
+        player.debit = debit;
+      } 
+    });
 
     m("#addDebit").off('click');
     m("#cancelAddDebit").off('click');
@@ -69,8 +89,7 @@ function addDebit(e) {
 }
 
 function paySeason(e) {
-  var id = parseInt(e.target.getAttribute("data-id"));
-  var key = practice.players[id].key;
+  var key = e.target.dataset.key;
 
   var name = "";
   players.forEach(function(player){
@@ -151,8 +170,7 @@ function addPerson() {
 }
 
 function renamePerson (e) {
-  var id = parseInt(e.target.getAttribute("data-id"));
-  var key = practice.players[id].key;
+  var key = e.target.dataset.key;;
 
   var name = "";
   players.forEach(function(player){
@@ -198,16 +216,22 @@ function renamePerson (e) {
 }
 
 function addBeer (e) {
-  var id = parseInt(e.target.getAttribute("data-id"));
-  var beerCount = practice.players[id].beers;
-  practice.players[id].beers = parseInt(beerCount) + 1;
+  var key = e.target.dataset.key;
+  practice.players.forEach(function(player){
+    if(player.key === key) {
+      player.beers = parseInt(player.beers) + 1
+    } 
+  });
   renderList();
 }
 
 function removeBeer (e) {
-  var id = parseInt(e.target.getAttribute("data-id"));
-  var beerCount = practice.players[id].beers;
-  practice.players[id].beers = parseInt(beerCount) - 1;
+  var key = e.target.dataset.key;
+  practice.players.forEach(function(player){
+    if(player.key === key) {
+      player.beers = parseInt(player.beers) - 1
+    } 
+  });
   renderList();
 }
 
@@ -223,6 +247,7 @@ function renderList () {
     players.forEach(function(player){
       if(practicePlayer.key === player.key) {
         combinedPlayers.push({
+          key: player.key,
           name: player.name,
           beers: practicePlayer.beers,
           debit: practicePlayer.debit,
@@ -231,6 +256,8 @@ function renderList () {
       }
     });
   });
+
+  combinedPlayers.sort(compareNames);
 
   var practiceToBeRender = {
     players: combinedPlayers
