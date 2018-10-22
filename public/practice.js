@@ -6,6 +6,7 @@ var userRef = "";
 var practiceRef = "";
 var practice = {};
 var players = [];
+var practiceKey = "";
 
 function logIn() {
   var email = document.getElementById('email').value;
@@ -42,9 +43,8 @@ function savePractice () {
   }
 
   // create a new practice, add it to the db and get its ID
-  var practicesReg = firebase.database().ref(userRef + '/practices');
-  var newPracticeRef = practicesReg.push();
-  newPracticeRef.set({
+  var practicesReg = firebase.database().ref(userRef + '/practices/' + practiceKey);
+  practicesReg.set({
     date: practice.date,
     comment: practice.comment,
     players: practice.players
@@ -58,6 +58,12 @@ function savePractice () {
 }
 
 function setup () {
+  let urlParams = new URLSearchParams(window.location.search);
+  practiceKey = urlParams.get('key');
+  if(practiceKey === null || practiceKey.length === 0) {
+    window.location = "/";
+  }
+
   template = Handlebars.compile(document.querySelector('#person').innerHTML);
   totalTemplate = Handlebars.compile(document.querySelector('#totalTemplate').innerHTML);
   loginTemplate = Handlebars.compile(document.querySelector('#loginTemplate').innerHTML);
@@ -83,31 +89,28 @@ function setup () {
       userRef = '/users/' + user.uid;
       m('#sign-in').off('click', logIn);
 
-      return firebase.database().ref(`${userRef}/players`).once('value').then(function(snapshot) {
-        var practicePlayers = [];
-        snapshot.forEach((child) => {
-          players.push({
-            key: child.key,
-            name: child.val().name,
-            paid: child.val().paid
-          });
+      return firebase.database().ref(`${userRef}/practices/${practiceKey}`).once('value').then(function(practiceSnapshot) {
+        
+        console.log(practiceSnapshot, practiceSnapshot.key, practiceSnapshot.val());
 
-          practicePlayers.push({
-            key: child.key,
-            beers: 0,
-            debit: 0
+        firebase.database().ref(`${userRef}/players`).once('value').then(function(playersSnapshot) {
+          playersSnapshot.forEach((child) => {
+            players.push({
+              key: child.key,
+              name: child.val().name,
+              paid: child.val().paid
+            });
           });
+  
+          practice = {
+            date: practiceSnapshot.val().date,
+            comment: practiceSnapshot.val().comment,
+            players: practiceSnapshot.val().players
+          };
+          renderList();
+  
+          m("body").removeClass("loggedout");
         });
-
-        var now = new Date();
-        practice = {
-          date: now.getTime(),
-          comment: "",
-          players: practicePlayers
-        };
-        renderList();
-
-        m("body").removeClass("loggedout");
       });
       // [START_EXCLUDE]
       
