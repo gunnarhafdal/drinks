@@ -5,6 +5,7 @@ var template, totalTemplate, loginTemplate, addPlayerTemplate, addDebitTemplate;
 var userRef = "";
 var practiceRef = "";
 var practice = {};
+var players = [];
 
 function addComment() {
   var comment = practice.comment;
@@ -73,8 +74,23 @@ function paySeason(e) {
   if (!confirm('🤑 Borga æfingagjöld hjá ' + name + '! Ertu viss?')) {
     return false;
   }
-  practice.players[id].paid = true;
-  renderList();
+  var key = practice.players[id].key;
+
+  var updates = {};
+    updates[userRef + '/players/' + key +'/paid'] = true;
+    return firebase.database().ref().update(updates, function(error) {
+    if (error) {
+      console.log(error);
+      return
+    } else {
+      players.forEach(function(player){
+        if(player.key === key) {
+          player.paid = true;
+        } 
+      });
+      renderList();
+    }
+  });
 }
 
 function addPerson() {
@@ -89,17 +105,35 @@ function addPerson() {
       return
     }
 
-    practice.players.push({
+    // create a new practice, add it to the db and get its ID
+    var playersReg = firebase.database().ref(userRef + '/players');
+    var newPlayerRef = playersReg.push();
+    return newPlayerRef.set({
       name: name,
-      beers: 0,
-      debit: 0,
       paid: false
-    })
+    }, function(error) {
+      if (error) {
+        console.log(error);
+        return
+      } else {
+        players.push({
+          key: newPlayerRef.key,
+          name: name,
+          paid: false
+        });
 
-    console.log(name, "added to list");
-    m("#addPlayer").off('click');
-    m("#cancelAddPlayer").off('click');
-    renderList();
+        practice.players.push({
+          key: newPlayerRef.key,
+          beers: 0,
+          debit: 0
+        });
+
+        console.log(name, "added to list");
+        m("#addPlayer").off('click');
+        m("#cancelAddPlayer").off('click');
+        renderList();
+      }
+    });
   });
 
   m("#cancelAddPlayer").on('click', function(){
@@ -123,11 +157,25 @@ function renamePerson (e) {
       return
     }
     
-    practice.players[id].name = newName;
-    
-    m("#addPlayer").off('click');
-    m("#cancelAddPlayer").off('click');
-    renderList();
+    var key = practice.players[id].key;
+
+    var updates = {};
+    updates[userRef + '/players/' + key +'/name'] = newName;
+    return firebase.database().ref().update(updates, function(error) {
+      if (error) {
+        console.log(error);
+        return
+      } else {
+        players.forEach(function(player){
+          if(player.key === key) {
+            player.name = newName;
+          } 
+        });
+        m("#addPlayer").off('click');
+        m("#cancelAddPlayer").off('click');
+        renderList();
+      }
+    });
   });
 
   m("#cancelAddPlayer").on('click', function(){
@@ -155,10 +203,29 @@ function removeBeer (e) {
 function renderList () {  
   console.log("Render list");
   var dateString = new Date(practice.date);
-
   document.querySelector('#date').innerText = "Æfing fyrir " + dateString.toDateString();
 
-  var rendered = template(practice);
+
+  var combinedPlayers = [];
+
+  practice.players.forEach(function(practicePlayer) {
+    players.forEach(function(player){
+      if(practicePlayer.key === player.key) {
+        combinedPlayers.push({
+          name: player.name,
+          beers: practicePlayer.beers,
+          debit: practicePlayer.debit,
+          paid: player.paid
+        });
+      }
+    });
+  });
+
+  var practiceToBeRender = {
+    players: combinedPlayers
+  }
+
+  var rendered = template(practiceToBeRender);
   document.querySelector('#players').innerHTML = rendered;
 
   var totalBeers = 0;
@@ -166,7 +233,6 @@ function renderList () {
   practice.players.forEach(function(person){
     totalBeers = totalBeers + parseInt(person.beers);
   });
-
   var totalRendered = totalTemplate({beers: totalBeers*10});
   document.querySelector('#total').innerHTML = totalRendered;
 
@@ -268,24 +334,27 @@ function setup () {
       userRef = '/users/' + user.uid;
       m('#sign-in').off('click', logIn);
 
-      return firebase.database().ref(`${userRef}/practices`).orderByChild('date').limitToLast(1).once('value').then(function(snapshot) {
-        var players = [];
+      return firebase.database().ref(`${userRef}/players`).once('value').then(function(snapshot) {
+        var practicePlayers = [];
         snapshot.forEach((child) => {
-          console.log(child.key, child.val());
-          if(child.val().players) {
-            players = child.val().players;
-            players.forEach(function(player) {
-              player.beers = 0;
-              player.debit = 0;
-            });
-          }
+          players.push({
+            key: child.key,
+            name: child.val().name,
+            paid: child.val().paid
+          });
+
+          practicePlayers.push({
+            key: child.key,
+            beers: 0,
+            debit: 0
+          });
         });
 
         var now = new Date();
         practice = {
           date: now.getTime(),
           comment: "",
-          players: players
+          players: practicePlayers
         };
         renderList();
 
