@@ -1,10 +1,23 @@
-const renderPractices = (list) => {
-  console.log(list);
+var template = {};
+
+const renderPractices = (snapshot) => {
+  console.log(snapshot);
+  var practices = [];
+
+  snapshot.forEach((child) => {
+    var date = new Date(child.val().date);
+    practices.push({
+      key: child.key,
+      date: date.toDateString(),
+      comment: child.val().comment
+    });
+  });
+
+  document.querySelector('.practices').innerHTML = template({practices: practices});
 }
 
 const setup = () => {
-  template = document.querySelector('#practice-list').innerHTML;
-  Mustache.parse(template);
+  template = Handlebars.compile(document.querySelector('#practice-list').innerHTML);
 
   // Listening for auth state changes.
   // [START authstatelistener]
@@ -15,7 +28,7 @@ const setup = () => {
     if (user) {
       return firebase.database().ref(`users/${user.uid}/practices`).once('value').then(function(snapshot) {
         //console.log(snapshot.val());
-        renderPractices(snapshot.val())
+        renderPractices(snapshot)
       });
     } else {
       window.location = "/login.html";
