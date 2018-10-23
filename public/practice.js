@@ -90,6 +90,8 @@ function setup () {
             comment: practiceSnapshot.val().comment,
             players: practicePlayers
           };
+          var titleDate = new Date(practice.date);
+          document.title = `Æfing ${titleDate.toLocaleDateString()} - Mjölnis Æfingar`;
 
           players.sort(compareNames);
           practice.players.sort(compareNames);
