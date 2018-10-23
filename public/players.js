@@ -56,7 +56,7 @@ const payPlayerSeason = (e) => {
     updates[`users/${userId}/players/${key}/paid`] = true;
     return firebase.database().ref().update(updates, function(error) {
     if (error) {
-      console.log(error);
+      console.error(error);
       return
     } else {
       firebase.database().ref(`users/${userId}`).once('value').then(function(snapshot) {

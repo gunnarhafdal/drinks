@@ -14,7 +14,7 @@
       <nav>
         <a href="/index.html">Æfingar</a> — <a href="/players.html">Leikmenn</a>
       </nav>
-      <p id="date"></p>
+      <p>Ný æfing fyrir <span id="date"></span></p>
   </header>
   <section>
     <header class="Grid thead">
@@ -56,15 +56,7 @@
     {{/players}}
   </template>
   <template id="totalTemplate">
-    Samtals: {{beers}}kr.
-  </template>
-
-  <template id="loginTemplate">
-    <h1>Skuldalisti Mjölnis</h1>
-    <input type="text" id="email" name="email" placeholder="Email"/>
-    <input type="password" id="password" name="password" placeholder="Lykilorð"/>
-    <br/>
-    <button id="sign-in" name="signin" type="button">Innskrá</button>
+    Samtals bjórar: {{beers}}.
   </template>
 
   <template id="addPlayerTemplate">

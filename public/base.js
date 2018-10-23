@@ -106,7 +106,7 @@ function paySeason(e) {
     updates[userRef + '/players/' + key +'/paid'] = true;
     return firebase.database().ref().update(updates, function(error) {
     if (error) {
-      console.log(error);
+      console.error(error);
       return
     } else {
       players.forEach(function(player){
@@ -139,7 +139,7 @@ function addPerson() {
       paid: false
     }, function(error) {
       if (error) {
-        console.log(error);
+        console.error(error);
         return
       } else {
         players.push({
@@ -154,7 +154,6 @@ function addPerson() {
           debit: 0
         });
 
-        console.log(name, "added to list");
         m("#addPlayer").off('click');
         m("#cancelAddPlayer").off('click');
         renderList();
@@ -193,7 +192,7 @@ function renamePerson (e) {
     updates[userRef + '/players/' + key +'/name'] = newName;
     return firebase.database().ref().update(updates, function(error) {
       if (error) {
-        console.log(error);
+        console.error(error);
         return
       } else {
         players.forEach(function(player){
@@ -237,9 +236,8 @@ function removeBeer (e) {
 
 
 function renderList () {  
-  console.log("Render list");
   var dateString = new Date(practice.date);
-  document.querySelector('#date').innerText = "Æfing fyrir " + dateString.toDateString();
+  document.querySelector('#date').innerText = `${dateString.toLocaleDateString()} kl: ${dateString.toLocaleTimeString()}`;
 
   var combinedPlayers = [];
 
@@ -271,7 +269,7 @@ function renderList () {
   practice.players.forEach(function(person){
     totalBeers = totalBeers + parseInt(person.beers);
   });
-  var totalRendered = totalTemplate({beers: totalBeers*10});
+  var totalRendered = totalTemplate({beers: totalBeers});
   document.querySelector('#total').innerHTML = totalRendered;
 
   m('.beerup').on('click', addBeer);

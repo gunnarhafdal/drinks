@@ -1,7 +1,6 @@
 var template = {};
 
 const renderPractices = (snapshot) => {
-  console.log(snapshot);
   var practices = [];
 
   snapshot.forEach((child) => {
@@ -27,7 +26,6 @@ const setup = () => {
     // [END_EXCLUDE]
     if (user) {
       return firebase.database().ref(`users/${user.uid}/practices`).once('value').then(function(snapshot) {
-        //console.log(snapshot.val());
         renderPractices(snapshot)
       });
     } else {
