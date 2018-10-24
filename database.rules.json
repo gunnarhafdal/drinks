@@ -5,10 +5,7 @@
     "users": {
       "$uid": {
         ".read": "$uid === auth.uid",
-        ".write": "$uid === auth.uid",
-        "practices": {
-          ".indexOn": "date"
-        } 
+        ".write": "$uid === auth.uid"
       }
     }
   }
