@@ -78,7 +78,7 @@ const setup = () => {
     if (user) {
       userId = user.uid;
       return firebase.database().ref(`users/${userId}`).once('value').then(function(snapshot) {
-        renderPlayers(snapshot)
+        renderPlayers(snapshot);
       });
     } else {
       window.location = "/login.html";
